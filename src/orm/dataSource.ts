@@ -1,11 +1,11 @@
 import { DataSource } from "typeorm";
-import { User } from "./entity/User.entity";
+import { User } from "./entities/User.entity";
 
 export const dataSource = new DataSource({
     type: "mysql",
-    host: "localhost",
-    port: 3306,
-    username: "root",
+    host: process.env.DB_HOST,
+    port: parseInt(process.env.DB_PORT as string),
+    username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: "pubpix",
     entities: [User]

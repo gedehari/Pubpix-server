@@ -5,6 +5,7 @@ import express, { Request, Response } from "express";
 
 import user from "routes/user.route"
 import { initDatabase } from "orm/dataSource";
+import { checkAuth } from "controllers/auth.controller";
 
 initDatabase();
 
@@ -19,6 +20,11 @@ app.use("/user", user);
 
 app.get("/", (req: Request, res: Response) => {
     res.send("test");
+});
+
+app.get("/test", checkAuth, (req: Request, res: Response) => {
+    console.log(res.locals.user);
+    return res.send();
 });
 
 app.listen(PORT, () => {

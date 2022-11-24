@@ -1,9 +1,11 @@
 import { Router, Request, Response } from "express";
 
+import { refresh, signIn, signUp } from "controllers/user.controller";
+
 const router = Router();
 
-router.get("/", (req: Request, res: Response) => {
-    res.send("User route");
-});
+router.post("/signup", signUp);
+router.post("/signin", signIn)
+router.post("/refresh", refresh)
 
 export default router;
