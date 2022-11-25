@@ -37,8 +37,18 @@ export async function signUp(req: Request, res: Response) {
         return;   
     }
 
+    const usernameRegex = /^[a-zA-Z\-]+$/;
+    if (body.username.search(usernameRegex) < 0 && body.username.length > 32) {
+        res.status(400).json(getErrorDict("INVALID_USERNAME"));
+        return;
+    }
+
+    if (body.password.length < 8) {
+        res.status(400).json(getErrorDict("INVALID_PASSWORD"));
+        return;
+    }
+
     const newUser = repo.create();
-    // Skip validation for now
     newUser.username = body.username;
     newUser.displayName = body.displayName;
     newUser.hashedPassword = await bcrypt.hash(body.password, 16);
@@ -68,7 +78,7 @@ export async function signIn(req: Request, res: Response) {
     try {
         const passwordCorrect = await bcrypt.compare(body.password, user.hashedPassword);
         if (!passwordCorrect) {
-            return res.status(400).json(getErrorDict("INVALID_PASSWORD"));
+            return res.status(400).json(getErrorDict("INVALID_CREDENTIALS"));
         }
     } catch (error) {
         console.error(error)

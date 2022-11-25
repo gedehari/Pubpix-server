@@ -19,7 +19,7 @@ app.use(express.json());
 app.use("/user", user);
 
 app.get("/", (req: Request, res: Response) => {
-    res.send("test");
+    return res.status(204).send();
 });
 
 app.get("/test", checkAuth, (req: Request, res: Response) => {
