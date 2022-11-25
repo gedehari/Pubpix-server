@@ -1,25 +1,27 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import express, { Request, Response } from "express";
+import express, { Request, Response, urlencoded } from "express";
 
-import user from "routes/user.route"
+import user from "routes/user.route";
 import { initDatabase } from "orm/dataSource";
 import { checkAuth } from "controllers/auth.controller";
 
 initDatabase();
 
-// env vars
 const PORT = process.env.PORT || 8000;
 
 const app = express();
 
 app.use(express.json());
+app.use(urlencoded({extended: true}));
+
+app.use(express.static("public"));
 
 app.use("/user", user);
 
 app.get("/", (req: Request, res: Response) => {
-    return res.status(204).send();
+    return res.send();
 });
 
 app.get("/test", checkAuth, (req: Request, res: Response) => {
