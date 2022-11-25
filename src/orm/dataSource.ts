@@ -1,5 +1,5 @@
-import { DataSource } from "typeorm";
-import { User } from "./entities/User.entity";
+import { DataSource } from "typeorm"
+import { User } from "./entities/User.entity"
 
 export const dataSource = new DataSource({
     type: "mysql",
@@ -9,9 +9,9 @@ export const dataSource = new DataSource({
     password: process.env.DB_PASSWORD,
     database: "pubpix",
     entities: [User]
-});
+})
 
 export async function initDatabase() {
-    await dataSource.initialize();
-    console.log("Database initialized.");
+    await dataSource.initialize()
+    console.log("Database initialized.")
 }
