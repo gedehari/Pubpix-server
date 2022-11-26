@@ -1,4 +1,5 @@
 import { DataSource } from "typeorm"
+import { Post } from "./entities/Post.entity"
 import { User } from "./entities/User.entity"
 
 export const dataSource = new DataSource({
@@ -8,7 +9,7 @@ export const dataSource = new DataSource({
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: "pubpix",
-    entities: [User]
+    entities: [User, Post]
 })
 
 export async function initDatabase() {

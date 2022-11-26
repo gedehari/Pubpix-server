@@ -1,4 +1,4 @@
-import { Router, Request, Response } from "express"
+import { Router } from "express"
 
 import { refresh, signIn, signUp } from "controllers/user.controller"
 

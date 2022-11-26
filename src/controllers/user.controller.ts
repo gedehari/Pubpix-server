@@ -5,7 +5,7 @@ import bcrypt from "bcrypt"
 import { dataSource } from "orm/dataSource"
 import { User } from "orm/entities/User.entity"
 import { getErrorDict } from "utils/error.util"
-import { generateToken } from "./auth.controller"
+import { generateToken } from "../middlewares/auth.middleware"
 
 interface SignUpRequest {
     username: string

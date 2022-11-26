@@ -4,8 +4,9 @@ dotenv.config()
 import express, { Request, Response, urlencoded } from "express"
 
 import user from "routes/user.route"
+import post from "routes/post.route"
 import { initDatabase } from "orm/dataSource"
-import { checkAuth } from "controllers/auth.controller"
+import { checkAuth } from "middlewares/auth.middleware"
 
 initDatabase()
 
@@ -19,6 +20,7 @@ app.use(urlencoded({extended: true}))
 app.use(express.static("public"))
 
 app.use("/user", user)
+app.use("/post", post)
 
 app.get("/", (req: Request, res: Response) => {
     return res.send()
