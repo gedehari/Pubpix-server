@@ -1,3 +1,4 @@
+import { LessThanOrEqual } from "typeorm";
 import { Request, Response } from "express"
 import fs from "fs"
 import sharp from "sharp"
@@ -11,6 +12,27 @@ import { User } from "orm/entities/User.entity";
 
 interface UploadRequest {
     caption: string
+}
+
+export async function list(req: Request, res: Response) {
+    const limit = parseInt(req.query['limit'] as string) || 10;
+    if (limit <= 0) {
+        return res.status(400).json(getErrorDict("INVALID_LIMIT_PARAM"))
+    }
+    const from = parseInt(req.query['from'] as string) || 0;
+    if (from < 0) {
+        return res.status(400).json(getErrorDict("INVALID_FROM_PARAM"))
+    }
+
+    const repo = dataSource.getRepository(Post)
+    const posts = repo.find({
+        where: from === 0 ? undefined : [{id: LessThanOrEqual(from)}],
+        order: {id: 'DESC'},
+        take: limit,
+        cache: true
+    });
+
+    return res.json(posts);
 }
 
 export const processUpload = multer({
@@ -31,7 +53,6 @@ export async function upload(req: Request, res: Response) {
     }
 
     const user = res.locals.user as User
-    console.log(user)
 
     const uuid = uuidv4()
     const fileName = uuid + process.env.UPLOAD_EXT
