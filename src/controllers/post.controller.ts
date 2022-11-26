@@ -25,7 +25,7 @@ export async function list(req: Request, res: Response) {
     }
 
     const repo = dataSource.getRepository(Post)
-    const posts = repo.find({
+    const posts = await repo.find({
         where: from === 0 ? undefined : [{id: LessThanOrEqual(from)}],
         order: {id: 'DESC'},
         take: limit,
@@ -62,7 +62,6 @@ export async function upload(req: Request, res: Response) {
         await sharp(req.file?.buffer).resize(null, 1080).jpeg({mozjpeg: true, quality: 70}).toFile(path)
     } catch (error) {
         const e = error as Error
-        console.log(e.message)
         if (e.message === "Invalid input")
             return res.status(400).json(getErrorDict("INVALID_IMAGE"))
         return res.status(500).json(getErrorDict("UNKNOWN_ERROR"))
