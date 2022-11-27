@@ -1,25 +1,25 @@
-import { LessThanOrEqual } from "typeorm";
+import { LessThanOrEqual } from "typeorm"
 import { Request, Response } from "express"
 import fs from "fs"
 import sharp from "sharp"
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid'
 import multer, { FileFilterCallback } from "multer"
 
-import { getErrorDict } from "utils/error.util";
-import { dataSource } from "orm/dataSource";
-import { Post } from "orm/entities/Post.entity";
-import { User } from "orm/entities/User.entity";
+import { getErrorDict } from "utils/error.util"
+import { dataSource } from "orm/dataSource"
+import { Post } from "orm/entities/Post.entity"
+import { User } from "orm/entities/User.entity"
 
 interface UploadRequest {
     caption: string
 }
 
 export async function list(req: Request, res: Response) {
-    const limit = parseInt(req.query['limit'] as string) || 10;
+    const limit = parseInt(req.query['limit'] as string) || 10
     if (limit <= 0) {
         return res.status(400).json(getErrorDict("INVALID_LIMIT_PARAM"))
     }
-    const from = parseInt(req.query['from'] as string) || 0;
+    const from = parseInt(req.query['from'] as string) || 0
     if (from < 0) {
         return res.status(400).json(getErrorDict("INVALID_FROM_PARAM"))
     }
@@ -31,18 +31,18 @@ export async function list(req: Request, res: Response) {
         take: limit,
         relations: {author: true},
         cache: true
-    });
+    })
 
-    return res.json(posts);
+    return res.json(posts)
 }
 
 export const processUpload = multer({
     storage: multer.memoryStorage(),
     fileFilter: (req: Request, file: Express.Multer.File, callback: FileFilterCallback) => {
         if (file.mimetype.split("/")[0] === 'image') {
-            callback(null, true);
+            callback(null, true)
         } else {
-            callback(new Error("Invalid input"));
+            callback(new Error("Invalid input"))
         }
     }
 }).single("image")
