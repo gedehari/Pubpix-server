@@ -22,6 +22,7 @@ interface RefreshRequest {
     refreshToken: string
 }
 
+// TODO: maybe automatically sign in when signing up
 export async function signUp(req: Request, res: Response) {
     const body: SignUpRequest = req.body as SignUpRequest
     if (!(body.username && body.displayName && body.password)) {
@@ -70,7 +71,12 @@ export async function signIn(req: Request, res: Response) {
     }
 
     const repo = dataSource.getRepository(User)
-    const user = await repo.findOne({where: {username: body.username}})
+    const user = await repo.createQueryBuilder()
+        .select()
+        // TypeOrm wont fill hashedPassword if I didn't do it this way
+        .addSelect("hashed_password", "User_hashed_password")
+        .where("username = :u", {u: body.username})
+        .getOne()
     if (!user) {
         return res.status(400).json(getErrorDict("USERNAME_NOT_FOUND"))
     }

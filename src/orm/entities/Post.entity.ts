@@ -1,12 +1,13 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm"
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
+import { User } from "./User.entity"
 
 @Entity()
 export class Post {
     @PrimaryGeneratedColumn("increment")
     id: number
 
-    @Column({name: "user_id", type: "int", nullable: false})
-    userId: number
+    @ManyToOne(type => User)
+    author: User
 
     @Column({nullable: false, length: 1024})
     caption: string

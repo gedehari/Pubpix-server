@@ -11,12 +11,13 @@ export class User {
     @Column({name: "display_name", nullable: false, length: 64})
     displayName: string
 
-    @Column({name: "hashed_password", nullable: false, length: 128})
+    @Column({name: "hashed_password", select: false, nullable: false, length: 128})
     hashedPassword: string
 
-    @CreateDateColumn({name: 'created_at', nullable: false})
+    @CreateDateColumn({name: 'created_at', select: false, nullable: false})
     createdAt: Date
 
-    @Column({name: "last_login_at", nullable: true})
+    // TODO: use CreateDataColumn for this one
+    @Column({name: "last_login_at", select: false, nullable: true})
     lastLoginAt?: Date = undefined
 }

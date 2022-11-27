@@ -29,6 +29,7 @@ export async function list(req: Request, res: Response) {
         where: from === 0 ? undefined : [{id: LessThanOrEqual(from)}],
         order: {id: 'DESC'},
         take: limit,
+        relations: {author: true},
         cache: true
     });
 
@@ -68,7 +69,7 @@ export async function upload(req: Request, res: Response) {
     }
 
     const repo = dataSource.getRepository(Post)
-    const newPost = repo.create({userId: user.id, caption: body.caption, imageUuid: uuid})
+    const newPost = repo.create({author: user, caption: body.caption, imageUuid: uuid})
     const result = await repo.save(newPost)
 
     return res.status(201).json(result)
