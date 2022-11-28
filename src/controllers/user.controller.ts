@@ -56,12 +56,11 @@ export async function signUp(req: Request, res: Response) {
 
     try {
         const result = await repo.save(newUser)
+        return res.json(await generateToken(result))
     } catch (error) {
         console.error(error)
         return res.status(500).json(getErrorDict("UNKNOWN_ERROR"))
     }
-
-    return res.status(201).json({msg: "User created."})
 }
 
 export async function signIn(req: Request, res: Response) {
@@ -91,7 +90,7 @@ export async function signIn(req: Request, res: Response) {
         return res.status(500).json(getErrorDict("UNKNOWN_ERROR"))
     }
 
-    return res.json(generateToken(user))
+    return res.json(await generateToken(user))
 }
 
 export async function refresh(req: Request, res: Response) {
@@ -107,7 +106,7 @@ export async function refresh(req: Request, res: Response) {
         if (!user) {
             return res.status(400).json(getErrorDict("INVALID_REFRESH_TOKEN"))
         }
-        return res.json(generateToken(user))
+        return res.json(await generateToken(user))
     } catch (error) {
         return res.status(400).json(getErrorDict("INVALID_REFRESH_TOKEN"))
     }

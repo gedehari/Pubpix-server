@@ -14,10 +14,9 @@ export class User {
     @Column({name: "hashed_password", select: false, nullable: false, length: 128})
     hashedPassword: string
 
-    @CreateDateColumn({name: 'created_at', select: false, nullable: false})
+    @CreateDateColumn({name: 'created_at', nullable: false})
     createdAt: Date
 
-    // TODO: use CreateDataColumn for this one
-    @Column({name: "last_login_at", select: false, nullable: true})
-    lastLoginAt?: Date = undefined
+    @CreateDateColumn({name: "last_login_at", select: false, nullable: false})
+    lastLoginAt: Date
 }

@@ -43,8 +43,14 @@ export async function checkAuth(req: Request, res: Response, next: NextFunction)
     }
 }
 
-export function generateToken(user: User): TokenResponse {
-    const accessExpiry = 60 * 60
+export async function generateToken(user: User): Promise<TokenResponse> {
+    const now = new Date()
+    user.lastLoginAt = new Date(now.getTime())
+
+    const repo = dataSource.getRepository(User)
+    const result = await repo.save(user)
+
+    const accessExpiry = 60 * 30
 
     const accessToken = jwt.sign({username: user.username}, process.env.ACCESS_KEY as string, {expiresIn: accessExpiry})
     const refreshToken = jwt.sign({username: user.username}, process.env.REFRESH_KEY as string, {expiresIn: "7d"})
@@ -52,6 +58,6 @@ export function generateToken(user: User): TokenResponse {
     return {
         accessToken,
         refreshToken,
-        expiresIn: new Date(Date.now() + accessExpiry * 1000)
+        expiresIn: new Date(now.getTime() + accessExpiry * 1000)
     }
 }
