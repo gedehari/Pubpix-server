@@ -4,6 +4,7 @@ import jwt, { JwtPayload } from "jsonwebtoken"
 import { User } from "orm/entities/User.entity"
 import { getErrorDict } from "utils/error.util"
 import { dataSource } from "orm/dataSource"
+import { RefreshToken } from "orm/entities/RefreshToken.entity"
 
 interface TokenResponse {
     accessToken: string,
@@ -47,13 +48,17 @@ export async function generateToken(user: User): Promise<TokenResponse> {
     const now = new Date()
     user.lastLoginAt = new Date(now.getTime())
 
-    const repo = dataSource.getRepository(User)
-    const result = await repo.save(user)
+    const userRepo = dataSource.getRepository(User)
+    await userRepo.save(user)
 
     const accessExpiry = 60 * 30
 
     const accessToken = jwt.sign({username: user.username}, process.env.ACCESS_KEY as string, {expiresIn: accessExpiry})
     const refreshToken = jwt.sign({username: user.username}, process.env.REFRESH_KEY as string, {expiresIn: "7d"})
+
+    const refreshTokenRepo = dataSource.getRepository(RefreshToken)
+    const refreshTokenEntity = refreshTokenRepo.create({refreshToken: refreshToken, user: user})
+    await refreshTokenRepo.save(refreshTokenEntity)
 
     return {
         accessToken,

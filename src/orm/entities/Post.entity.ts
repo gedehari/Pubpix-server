@@ -6,7 +6,7 @@ export class Post {
     @PrimaryGeneratedColumn("increment")
     id: number
 
-    @ManyToOne(type => User)
+    @ManyToOne(() => User)
     author: User
 
     @Column({nullable: false, length: 1024})

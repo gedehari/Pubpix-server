@@ -6,6 +6,8 @@ import { dataSource } from "orm/dataSource"
 import { User } from "orm/entities/User.entity"
 import { getErrorDict } from "utils/error.util"
 import { generateToken } from "../middlewares/auth.middleware"
+import { RefreshToken } from "orm/entities/RefreshToken.entity"
+import { Equal } from "typeorm"
 
 interface SignUpRequest {
     username: string
@@ -101,13 +103,23 @@ export async function refresh(req: Request, res: Response) {
 
     try {
         const decoded = jwt.verify(body.refreshToken, process.env.REFRESH_KEY as string) as JwtPayload
-        const repo = dataSource.getRepository(User)
-        const user = await repo.findOne({where: {username: decoded.username}})
-        if (!user) {
-            return res.status(400).json(getErrorDict("INVALID_REFRESH_TOKEN"))
+        const userRepo = dataSource.getRepository(User)
+        const user = await userRepo.findOne({where: {username: decoded.username}, relations: {refreshTokens: true}})
+
+        if (user) {
+            const matchedToken = user?.refreshTokens.find(token => token.refreshToken === body.refreshToken)
+            if (matchedToken) {
+                const refreshTokenRepo = dataSource.getRepository(RefreshToken)
+                await refreshTokenRepo.delete(matchedToken)
+                return res.json(await generateToken(user))
+            }
+            user.refreshTokens = []
+            await userRepo.save(user)
+            throw new Error("Possible token theft")
         }
-        return res.json(await generateToken(user))
+        throw new Error("User not found")
     } catch (error) {
+        console.log(error)
         return res.status(400).json(getErrorDict("INVALID_REFRESH_TOKEN"))
     }
 }

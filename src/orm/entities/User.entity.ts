@@ -1,5 +1,7 @@
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 
+import { RefreshToken } from "./RefreshToken.entity"
+
 @Entity()
 export class User {
     @PrimaryGeneratedColumn("increment")
@@ -19,4 +21,7 @@ export class User {
 
     @CreateDateColumn({name: "last_login_at", select: false, nullable: false})
     lastLoginAt: Date
+
+    @OneToMany(() => RefreshToken, token => token.user)
+    refreshTokens: RefreshToken[]
 }

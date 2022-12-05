@@ -1,5 +1,7 @@
 import { DataSource } from "typeorm"
+
 import { Post } from "./entities/Post.entity"
+import { RefreshToken } from "./entities/RefreshToken.entity"
 import { User } from "./entities/User.entity"
 
 export const dataSource = new DataSource({
@@ -10,7 +12,7 @@ export const dataSource = new DataSource({
     password: process.env.DB_PASSWORD,
     database: "pubpix",
     timezone: "Z",
-    entities: [User, Post],
+    entities: [User, RefreshToken, Post]
 })
 
 export async function initDatabase() {
