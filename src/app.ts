@@ -4,6 +4,7 @@ dotenv.config()
 import express, { Request, Response, urlencoded } from "express"
 import cors from 'cors'
 
+import auth from "routes/auth.route"
 import user from "routes/user.route"
 import post from "routes/post.route"
 import { initDatabase } from "orm/dataSource"
@@ -21,6 +22,7 @@ app.use(urlencoded({extended: true}))
 
 app.use(express.static("public"))
 
+app.use("/auth", auth)
 app.use("/user", user)
 app.use("/post", post)
 

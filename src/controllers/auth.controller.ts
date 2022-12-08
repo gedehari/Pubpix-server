@@ -7,7 +7,6 @@ import { User } from "orm/entities/User.entity"
 import { getErrorDict } from "utils/error.util"
 import { generateToken } from "../middlewares/auth.middleware"
 import { RefreshToken } from "orm/entities/RefreshToken.entity"
-import { Equal } from "typeorm"
 
 interface SignUpRequest {
     username: string
@@ -24,7 +23,6 @@ interface RefreshRequest {
     refreshToken: string
 }
 
-// TODO: maybe automatically sign in when signing up
 export async function signUp(req: Request, res: Response) {
     const body: SignUpRequest = req.body as SignUpRequest
     if (!(body.username && body.displayName && body.password)) {
@@ -79,7 +77,7 @@ export async function signIn(req: Request, res: Response) {
         .where("username = :u", {u: body.username})
         .getOne()
     if (!user) {
-        return res.status(400).json(getErrorDict("USERNAME_NOT_FOUND"))
+        return res.status(400).json(getErrorDict("INVALID_CREDENTIALS"))
     }
 
     try {
