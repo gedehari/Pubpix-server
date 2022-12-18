@@ -38,7 +38,7 @@ export async function signUp(req: Request, res: Response) {
         return   
     }
 
-    const usernameRegex = /^[a-zA-Z\-]+$/
+    const usernameRegex = /^[a-z\-]+$/
     if (body.username.search(usernameRegex) < 0 && body.username.length > 32) {
         res.status(400).json(getErrorDict("INVALID_USERNAME"))
         return
